@@ -72,5 +72,71 @@ namespace EmployeesAzureFunction.Functions.Functions
         }
 
 
+        [FunctionName(nameof(UpdateTime))]
+        public static async Task<IActionResult> UpdateTime(
+         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "time/{id}")] HttpRequest req,
+         [Table("time", Connection = "AzureWebJobsStorage")] CloudTable todoTable,
+         string id,
+         ILogger log)
+        {
+            log.LogInformation($"Update a new time: {id} , received");
+
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            Time time = JsonConvert.DeserializeObject<Time>(requestBody);
+
+            //validate time id
+
+            TableOperation finOperation = TableOperation.Retrieve<TimeEntity>("TIME", id);
+            TableResult findResult = await todoTable.ExecuteAsync(finOperation);
+
+            if (findResult.Result == null)
+            {
+                return new BadRequestObjectResult(new Response
+                {
+                    IsSuccess = false,
+                    Message = "Time not found."
+                });
+            }
+
+            if (string.IsNullOrEmpty(time.IsConsolidated.ToString())||
+                string.IsNullOrEmpty(time.Type.ToString())||
+                string.IsNullOrEmpty(time.EmployeeId.ToString()))
+            {
+                return new BadRequestObjectResult(new Response
+                {
+                    IsSuccess = false,
+                    Message = "Parameters are not complete."
+                });
+            }
+
+            //Update time
+            TimeEntity timeEntity = (TimeEntity)findResult.Result;
+            timeEntity.IsConsolidated = time.IsConsolidated;
+            timeEntity.Type = time.Type;
+            timeEntity.EmployeeId = time.EmployeeId;
+
+
+
+
+
+            TableOperation addOperation = TableOperation.Replace(timeEntity);
+            await todoTable.ExecuteAsync(addOperation);
+
+            string message = $"Time :{id} update in table";
+            log.LogInformation(message);
+
+
+
+            return new OkObjectResult(new Response
+            {
+                IsSuccess = true,
+                Message = message,
+                Result = timeEntity
+
+            });
+            ;
+        }
+
     }
 }

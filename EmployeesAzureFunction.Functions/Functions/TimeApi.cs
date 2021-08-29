@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EmployeesAzureFunction.Common.Models;
+using EmployeesAzureFunction.Common.Responses;
+using EmployeesAzureFunction.Functions.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -8,11 +11,6 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Text;
-using EmployeesAzureFunction.Common.Models;
-using EmployeesAzureFunction.Common.Responses;
-using EmployeesAzureFunction.Functions.Entities;
 
 namespace EmployeesAzureFunction.Functions.Functions
 {
@@ -21,7 +19,7 @@ namespace EmployeesAzureFunction.Functions.Functions
         [FunctionName(nameof(CreateTime))]
         public static async Task<IActionResult> CreateTime(
          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "time")] HttpRequest req,
-         [Table("time", Connection = "AzureWebJobsStorage")] CloudTable todoTable,
+         [Table("time", Connection = "AzureWebJobsStorage")] CloudTable timeTable,
          ILogger log)
         {
             log.LogInformation("Receivedd a new time");
@@ -30,8 +28,8 @@ namespace EmployeesAzureFunction.Functions.Functions
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Time time = JsonConvert.DeserializeObject<Time>(requestBody);
 
-            if (string.IsNullOrEmpty(time?.Date.ToString())|| 
-                string.IsNullOrEmpty(time?.Type.ToString())|| 
+            if (string.IsNullOrEmpty(time?.Date.ToString()) ||
+                string.IsNullOrEmpty(time?.Type.ToString()) ||
                 string.IsNullOrEmpty(time?.EmployeeId.ToString()))
             {
                 return new BadRequestObjectResult(new Response
@@ -54,9 +52,9 @@ namespace EmployeesAzureFunction.Functions.Functions
             };
 
             TableOperation addOperation = TableOperation.Insert(timeEntity);
-            await todoTable.ExecuteAsync(addOperation);
+            await timeTable.ExecuteAsync(addOperation);
 
-            string message = "New todo stored in table";
+            string message = "New time stored in table";
             log.LogInformation(message);
 
 
@@ -75,7 +73,7 @@ namespace EmployeesAzureFunction.Functions.Functions
         [FunctionName(nameof(UpdateTime))]
         public static async Task<IActionResult> UpdateTime(
          [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "time/{id}")] HttpRequest req,
-         [Table("time", Connection = "AzureWebJobsStorage")] CloudTable todoTable,
+         [Table("time", Connection = "AzureWebJobsStorage")] CloudTable timeTable,
          string id,
          ILogger log)
         {
@@ -88,7 +86,7 @@ namespace EmployeesAzureFunction.Functions.Functions
             //validate time id
 
             TableOperation finOperation = TableOperation.Retrieve<TimeEntity>("TIME", id);
-            TableResult findResult = await todoTable.ExecuteAsync(finOperation);
+            TableResult findResult = await timeTable.ExecuteAsync(finOperation);
 
             if (findResult.Result == null)
             {
@@ -99,8 +97,8 @@ namespace EmployeesAzureFunction.Functions.Functions
                 });
             }
 
-            if (string.IsNullOrEmpty(time.IsConsolidated.ToString())||
-                string.IsNullOrEmpty(time.Type.ToString())||
+            if (string.IsNullOrEmpty(time.IsConsolidated.ToString()) ||
+                string.IsNullOrEmpty(time.Type.ToString()) ||
                 string.IsNullOrEmpty(time.EmployeeId.ToString()))
             {
                 return new BadRequestObjectResult(new Response
@@ -121,7 +119,7 @@ namespace EmployeesAzureFunction.Functions.Functions
 
 
             TableOperation addOperation = TableOperation.Replace(timeEntity);
-            await todoTable.ExecuteAsync(addOperation);
+            await timeTable.ExecuteAsync(addOperation);
 
             string message = $"Time :{id} update in table";
             log.LogInformation(message);
@@ -138,5 +136,68 @@ namespace EmployeesAzureFunction.Functions.Functions
             ;
         }
 
+
+        [FunctionName(nameof(GetAllTimes))]
+        public static async Task<IActionResult> GetAllTimes(
+         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "time")] HttpRequest req,
+         [Table("time", Connection = "AzureWebJobsStorage")] CloudTable timeTable,
+         ILogger log)
+        {
+            log.LogInformation("Get all times Receivedd ");
+
+            TableQuery<TimeEntity> query = new TableQuery<TimeEntity>();
+            TableQuerySegment<TimeEntity> times = await timeTable.ExecuteQuerySegmentedAsync(query, null);
+
+            string message = "Retrieved all times.";
+            log.LogInformation(message);
+
+
+
+            return new OkObjectResult(new Response
+            {
+                IsSuccess = true,
+                Message = message,
+                Result = times
+
+            });
+            ;
+        }
+
+        [FunctionName(nameof(GetTimeById))]
+        public static IActionResult GetTimeById(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "time/{id}")] HttpRequest req,
+        [Table("time", "TIME", "{id}", Connection = "AzureWebJobsStorage")] TimeEntity timeEntity,
+        string id,
+        ILogger log)
+        {
+            log.LogInformation($"Get time by id:{id} received ");
+
+
+            if (timeEntity == null)
+            {
+                return new BadRequestObjectResult(new Response
+                {
+                    IsSuccess = false,
+                    Message = "Time not found."
+                });
+            }
+            string message = $"Time: {timeEntity.RowKey}, retrieved.";
+            log.LogInformation(message);
+
+
+
+            return new OkObjectResult(new Response
+            {
+                IsSuccess = true,
+                Message = message,
+                Result = timeEntity
+
+            });
+            ;
+        }
+
     }
+
+
+
 }

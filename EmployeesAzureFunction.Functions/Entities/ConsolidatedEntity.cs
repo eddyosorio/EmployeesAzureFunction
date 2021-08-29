@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EmployeesAzureFunction.Functions.Entities
 {
-    class ConsolidatedEntity:TableEntity
+    public class ConsolidatedEntity:TableEntity
     {
         public int EmployeeId { get; set; }
         public DateTime Date { get; set; }

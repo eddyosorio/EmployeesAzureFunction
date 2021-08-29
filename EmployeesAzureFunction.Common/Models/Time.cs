@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EmployeesAzureFunction.Common.Models
 {
-    class Time
+    public class Time
     {
         public DateTime Date { get; set; }
         public int EmployeeId { get; set; }

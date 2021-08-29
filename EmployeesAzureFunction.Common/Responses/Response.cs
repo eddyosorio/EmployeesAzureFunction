@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EmployeesAzureFunction.Common.Responses
 {
-    class Response
+    public class Response
     {
         public bool IsSuccess { get; set; }
 

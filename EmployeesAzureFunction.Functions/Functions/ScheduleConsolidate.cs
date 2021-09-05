@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace EmployeesAzureFunction.Functions.Functions
 {
-    class ScheduleConsolidate
+    public static class ScheduleConsolidate
     {
-        [FunctionName("ScheduleFunction")]
+        [FunctionName("ScheduleConsolidate")]
         public static async Task Run(
             [TimerTrigger("0 */5 * * * *")] TimerInfo myTimer,
         [Table("time", Connection = "AzureWebJobsStorage")] CloudTable timeTable,

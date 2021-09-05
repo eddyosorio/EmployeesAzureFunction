@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Test\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\EmployeesAzureFunction.Functions\EmployeesAzureFunction.Functions.csproj" />
   </ItemGroup>
 

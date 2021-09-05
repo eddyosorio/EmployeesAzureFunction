@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 
 namespace EmployeesAzureFunction.Test.Helpers
 {
-    public class MockCloudTableTime : CloudTable
+    public class MockCloudTableConsolidate : CloudTable
     {
-        public MockCloudTableTime(Uri tableAddress) : base(tableAddress)
+        public MockCloudTableConsolidate(Uri tableAddress) : base(tableAddress)
         {
         }
 
-        public MockCloudTableTime(Uri tableAbsoluteUri, StorageCredentials credentials) : base(tableAbsoluteUri, credentials)
+        public MockCloudTableConsolidate(Uri tableAbsoluteUri, StorageCredentials credentials) : base(tableAbsoluteUri, credentials)
         {
         }
 
-        public MockCloudTableTime(StorageUri tableAddress, StorageCredentials credentials) : base(tableAddress, credentials)
+        public MockCloudTableConsolidate(StorageUri tableAddress, StorageCredentials credentials) : base(tableAddress, credentials)
         {
         }
         public override async Task<TableResult> ExecuteAsync(TableOperation operation)
@@ -38,9 +38,7 @@ namespace EmployeesAzureFunction.Test.Helpers
                    .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
                    .FirstOrDefault(c => c.GetParameters().Count() == 1);
 
-            return await Task.FromResult(constructor.Invoke(new object[] { TestFactory.GetTimesEntity() }) as TableQuerySegment<RecordEntity>);
+            return await Task.FromResult(constructor.Invoke(new object[] { TestFactory.GetConsolidateEntity() }) as TableQuerySegment<RecordEntity>);
         }
-
-
     }
 }

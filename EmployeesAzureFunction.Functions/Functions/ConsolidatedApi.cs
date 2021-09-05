@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 namespace EmployeesAzureFunction.Functions.Functions
 {
-    internal class ConsolidatedApi
+    public static  class ConsolidatedApi
     {
         [FunctionName(nameof(ConsolidateProcess))]
         public static async Task<IActionResult> ConsolidateProcess(

@@ -8,16 +8,19 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace EmployeesAzureFunction.Test.Helpers
 {
     public class TestFactory
     {
 
-        public static TimeEntity GetTimeEntity()
+        public static List<TimeEntity> GetTimesEntity()
         {
-            return new TimeEntity
+
+
+            return new List<TimeEntity>
+            {
+                     new TimeEntity
             {
                 Date = DateTime.UtcNow,
                 ETag = "*",
@@ -26,8 +29,41 @@ namespace EmployeesAzureFunction.Test.Helpers
                 RowKey = Guid.NewGuid().ToString(),
                 EmployeeId = 1,
                 Type = 0
-            };
+            }
+        };
+        }
+        public static TimeEntity GetTimeEntity()
+        {
+            return
+                 new TimeEntity
+                 {
+                     Date = DateTime.UtcNow,
+                     ETag = "*",
+                     IsConsolidated = false,
+                     PartitionKey = "TIME",
+                     RowKey = Guid.NewGuid().ToString(),
+                     EmployeeId = 1,
+                     Type = 0
 
+                 };
+
+        }
+
+        public static List<ConsolidatedEntity> GetConsolidateEntity()
+        {
+            return
+                 new List<ConsolidatedEntity>
+                 {
+                     new ConsolidatedEntity
+                 {
+                     Date = DateTime.UtcNow,
+                     ETag = "*",
+                     PartitionKey = "CONSOLIDATED",
+                     RowKey = Guid.NewGuid().ToString(),
+                     EmployeeId = 1,
+
+                 }
+                 };
         }
 
 
@@ -51,6 +87,16 @@ namespace EmployeesAzureFunction.Test.Helpers
             };
 
         }
+        public static DefaultHttpRequest CreateHttpRequest(Consolidated consolidatedRequest)
+        {
+            string request = JsonConvert.SerializeObject(consolidatedRequest);
+            return new DefaultHttpRequest(new DefaultHttpContext())
+
+            {
+                Body = GenerateStreamFromString(request),
+            };
+
+        }
         public static DefaultHttpRequest CreateHttpRequest(Time timeRequest)
         {
             string request = JsonConvert.SerializeObject(timeRequest);
@@ -61,7 +107,6 @@ namespace EmployeesAzureFunction.Test.Helpers
             };
 
         }
-
 
         public static DefaultHttpRequest CreateHttpRequest()
         {
@@ -76,7 +121,17 @@ namespace EmployeesAzureFunction.Test.Helpers
                 Date = DateTime.UtcNow,
                 EmployeeId = 1,
                 Type = 0,
-                IsConsolidated=false
+                IsConsolidated = false
+            };
+        }
+
+        public static Consolidated GetConsolidatedRequest()
+        {
+            return new Consolidated
+            {
+                Date = DateTime.UtcNow,
+                EmployeeId = 1,
+                Minutes = 100
             };
         }
         public static Stream GenerateStreamFromString(string stringToConvert)

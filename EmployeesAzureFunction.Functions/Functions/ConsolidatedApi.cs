@@ -25,17 +25,17 @@ namespace EmployeesAzureFunction.Functions.Functions
             log.LogInformation("Received a new consolidation");
             int count = 0;
             int countAdd = 0;
-
             TableQuery<TimeEntity> query = new TableQuery<TimeEntity>()
                 .Where(TableQuery.GenerateFilterConditionForBool("IsConsolidated", QueryComparisons.Equal
                  , false));
+            
             TableQuerySegment<TimeEntity> times = await timeTable.ExecuteQuerySegmentedAsync(query, null);
             List<TimeEntity> orderEmployees = times
                 .OrderBy(t => t.EmployeeId)
                 .ThenBy(t => t.Date).ToList();
 
             List<ConsolidatedEntity> consolidatedEntitys = new List<ConsolidatedEntity>();
-
+            
             for (int i = 0; i < orderEmployees.Count; i++)
             {
                 if (i + 1 >= orderEmployees.Count)
@@ -101,7 +101,6 @@ namespace EmployeesAzureFunction.Functions.Functions
                     await consolidateTable.ExecuteAsync(UpdateConsolidated);
                 }
 
-
             }
             foreach (TimeEntity item in orderEmployees)
             {
@@ -156,7 +155,5 @@ namespace EmployeesAzureFunction.Functions.Functions
             ;
         }
     }
-
-
 
 }

@@ -19,7 +19,7 @@ namespace EmployeesAzureFunction.Functions.Functions
         [Table("time", Connection = "AzureWebJobsStorage")] CloudTable timeTable,
         [Table("consolidated", Connection = "AzureWebJobsStorage")] CloudTable consolidateTable, ILogger log)
         {
-            log.LogInformation($"Concolidate  function executed at:  {DateTime.Now}");
+            log.LogInformation($"Consolidate  function executed at:  {DateTime.Now}");
             int count = 0;
             int countAdd = 0;
 

@@ -1,4 +1,5 @@
-﻿using EmployeesAzureFunction.Common.Models;
+﻿using EmployeesAzureFunction.Common.Classes;
+using EmployeesAzureFunction.Common.Models;
 using EmployeesAzureFunction.Common.Responses;
 using EmployeesAzureFunction.Functions.Entities;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +10,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EmployeesAzureFunction.Functions.Functions
@@ -232,6 +235,7 @@ namespace EmployeesAzureFunction.Functions.Functions
             });
             ;
         }
+
 
     }
 

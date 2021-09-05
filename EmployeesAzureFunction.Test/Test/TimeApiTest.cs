@@ -21,11 +21,11 @@ namespace EmployeesAzureFunction.Test.Test
         public async void CreateTime_Should_Return_200()
         {
             //Arrenge
-            MockCloudTableTime mockTodos = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
+            MockCloudTableTime mockTime = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
             Time timeRequest = TestFactory.GetTimeRequest();
             DefaultHttpRequest request = TestFactory.CreateHttpRequest(timeRequest);
             //Act
-            IActionResult response = await TimeApi.CreateTime(request, mockTodos, logger);
+            IActionResult response = await TimeApi.CreateTime(request, mockTime, logger);
             //Assert
 
             OkObjectResult result = (OkObjectResult)response;
@@ -36,12 +36,12 @@ namespace EmployeesAzureFunction.Test.Test
         public async void Update_Should_Return_200()
         {
             //Arrenge
-            MockCloudTableTime mockTodos = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
+            MockCloudTableTime mockTime = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
             Time todoRequest = TestFactory.GetTimeRequest();
             Guid todoId = Guid.NewGuid();
             DefaultHttpRequest request = TestFactory.CreateHttpRequest(todoId, todoRequest);
             //Act
-            IActionResult response = await TimeApi.UpdateTime(request, mockTodos, todoId.ToString(), logger);
+            IActionResult response = await TimeApi.UpdateTime(request, mockTime, todoId.ToString(), logger);
             //Assert
 
             OkObjectResult result = (OkObjectResult)response;
@@ -53,48 +53,48 @@ namespace EmployeesAzureFunction.Test.Test
         public async void Delete_Should_Return_200()
         {
             //Arrenge
-            MockCloudTableTime mockTodos = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
+            MockCloudTableTime mockTime = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
             Time timeRequest = TestFactory.GetTimeRequest();
             TimeEntity timeEntity = TestFactory.GetTimeEntity();
 
             Guid todoId = Guid.NewGuid();
             DefaultHttpRequest request = TestFactory.CreateHttpRequest(todoId);
             //Act
-            IActionResult response = await TimeApi.DeleteTime(request, timeEntity, mockTodos, todoId.ToString(), logger);
+            IActionResult response = await TimeApi.DeleteTime(request, timeEntity, mockTime, todoId.ToString(), logger);
             //Assert
 
             OkObjectResult result = (OkObjectResult)response;
             Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
         }
 
-       
-        public async void GetById_Should_Return_200()
+        [Fact]
+        public async void GetTimeById_Should_Return_200()
         {
             //Arrenge
-            MockCloudTableTime mockTodos = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
+            MockCloudTableTime mockTime = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
             Time timeRequest = TestFactory.GetTimeRequest();
             TimeEntity timeEntity = TestFactory.GetTimeEntity();
             Guid timeId = Guid.NewGuid();
             DefaultHttpRequest request = TestFactory.CreateHttpRequest(timeId);
-            //Act
-        //    IActionResult response = await TimeApi.GetTimeById(request, timeEntity, timeId.ToString(), logger);
+           // Act
+           IActionResult response =  TimeApi.GetTimeById(request, timeEntity, timeId.ToString(), logger);
            
             //Assert
 
-           // OkObjectResult result = (OkObjectResult)response;
-           // Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
+           OkObjectResult result = (OkObjectResult)response;
+           Assert.Equal(StatusCodes.Status200OK, result.StatusCode);
         }
 
         [Fact]
         public async void GetAllTimes_Should_Return_200()
         {
             //Arrenge
-            MockCloudTableTime mockTodos = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
+            MockCloudTableTime mockTime = new MockCloudTableTime(new Uri("http://127.0.0.1:10002/devstoreaccount1/reports"));
         
             Guid timeId = Guid.NewGuid();
             DefaultHttpRequest request = TestFactory.CreateHttpRequest(timeId);
             //Act
-            IActionResult response = await TimeApi.GetAllTimes(request, mockTodos,  logger);
+            IActionResult response = await TimeApi.GetAllTimes(request, mockTime,  logger);
 
             //Assert
 

@@ -113,7 +113,7 @@ namespace EmployeesAzureFunction.Functions.Functions
 
             //Update time
             TimeEntity timeEntity = (TimeEntity)findResult.Result;
-            timeEntity.IsConsolidated = time.IsConsolidated;
+            timeEntity.Date = time.Date;
             timeEntity.Type = time.Type;
             timeEntity.EmployeeId = time.EmployeeId;
 
